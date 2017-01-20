@@ -57,6 +57,7 @@
   </div>
   <button type="submit" id="connexion" class="btn btn-default">Me connecter</button>
 </form>
+<a href="inscription.php">Pas encore inscrit ?</a>
 
 
 <script>

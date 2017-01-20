@@ -56,7 +56,7 @@
                         <a href="deconnexion.php">Deconnexion</a>
                         <?php }else{ ?>
                         <a href="connexion.php">Connexion</a>
-                        <a href="inscription.php">Inscription</a>
+                       <!-- <a href="inscription.php">Inscription</a> -->
                         <?php } ?>
                     </li>    
                 </ul>
@@ -75,14 +75,6 @@
                         <span class="name">Le fil</span>
                         <hr class="star-light">
                     </div> 
-                    <div class="col-lg-12">
-                        <form action="recherche.php" method="POST" id="recherche">
-                            <input type="text" class="form-control" placeholder="Indiquer une recherche">
-                            <span class="input-group-btn"> 
-                                <button class="btn btn-default" type="button">Rechercher</button>
-                            </span>
-                        </div><!-- /input-group -->
-                    </div>
                 </div>
             </div>
         </div>
