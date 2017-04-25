@@ -2,7 +2,11 @@
 session_start();
 include('includes/connexion.inc.php');
 include('includes/haut.inc.php');
+
+$index = new Smarty();
+$index->assign("connecte", $connecte);
 ?>
+
 
 <div class="row">              
   <form method="post" action='message.php'>
@@ -12,9 +16,14 @@ include('includes/haut.inc.php');
        /*Si on a un ID, on récupère la donnée en base*/
         if(isset($_GET['id']) && !empty($_GET['id'])){
         ?>  <input type="hidden" name="id" value="<?=$_GET['id']?>">  
+
         <?php 
+          
+        /// creer un array, et tant qu'il y a des messages dans la BD on les insere
           $query = 'SELECT * FROM messages WHERE id='.$_GET['id'];
-          $msgmodif = $pdo->query($query)->fetch();
+          $msgmodif = $pdo->query($query)->fetchAll();
+          $index->assign('msgmodif', $msgmodif);
+        
           }
         ?>
         <?php if($connecte==true){
@@ -31,8 +40,8 @@ include('includes/haut.inc.php');
   </form>
 </div>
 
-
 <?php
+
 
 //Pagination
 
@@ -58,31 +67,13 @@ include('includes/haut.inc.php');
   //Récupération de la derniere donnée pour afficher à partir du bon message
   $lecturePremiereDonnee = ($pageActuelle-1)*$messagesParPages;
 
+  $array = array();
+
   $lectureMessage = 'SELECT * FROM messages ORDER BY id DESC LIMIT '.$lecturePremiereDonnee.','.$messagesParPages.'';
   $prepa = $pdo->prepare($lectureMessage);
   $prepa ->execute();
-
-  while ($data = $prepa->fetch()) {
-     
-      ?>
-      <blockquote>
-      <!-- Design des messages envoyés -->
-          
-          <?= $data['contenu'] ?>
-          <span class ="pull-right">
-          <?php if($connecte==true){ ?>
-            <a href="index.php?id=<?= $data['id'] ?>"><button type="button" class="btn btn-info">Modifier</button></a>
-            <a href="suppression-msg.php?id=<?= $data['id'] ?>"><button type="button" class="btn btn-danger">Supprimer</button></a></span></br>
-            <?php  
-            }
-              echo "Date d'ajout : " ;
-              echo date("Y-m-d H-i-s",$data['date_emission']); 
-            ?> 
-          </span>
-      </blockquote>
-      <?php
-  }
-//Affichage des numéros de pages
+  $data = $prepa->fetchAll();
+  $index->assign('data', $data);
   for($i=1; $i<=$nombrePages; $i++){
     if($i==$pageActuelle){
       echo '<ul class="pagination">
@@ -94,6 +85,41 @@ include('includes/haut.inc.php');
            </ul>';
       }
   }
+
+  foreach ($prepa as $message){
+    if(preg_match_all('#([a-z\d-]+)', $message['champ'], $matches, PREG_SET_ORDER)){
+      foreach ($matches as $values) {
+        $dieze = "<a href='#'".$values[1]."'>'".$values[0]."</a>";
+        $message['champ'] = preg_replace("/".$values[0]."/", $dieze, $message['champ']);
+      }
+    }
+  }
+
+  foreach ($prepa as $mail) {
+    if(preg_match_all("^[a-zA-Z0-9\-]+@([a-z]+\.?[a-z0-9]+.[a-z]{2,3})$", $message['champ'], $matches, PREG_SET_ORDER)){
+      foreach($matches as $values){
+        $mail = "<a href='mailto:'".$matches[0][0]."'>'".$matches[0][0]."</a>";
+        $message['champ'] = preg_replace("/".$matches[0][0]."/", $mail, $message['champ']);
+      }
+    }
+  }
+
+$index->display('template/index.tpl');
+
+//Adresse mail : 
+//^[a-zA-Z0-9\-]+@([a-z]+\.?[a-z0-9]+.[a-z]{2,3})$
+
+// Récupération des mots avec #
+//#([a-z\d-]+)
+
+//URL
+//^(https?:\/\/[www.]*[a-zA-Z0-9\/\-\_\.\!\?\+\=]+[.][a-z]{2,3}[a-zA-Z0-9\/\-\_\!\?\+\=]*)$
+
+/*
+Développer un aperçu qui s'actualise en temps réel
+jquery : .change ou keypress(fonction(){})
+         .get(URL, {message, message}, function(data){}) => apercu.msg.php
+*/
 
 ?>
 

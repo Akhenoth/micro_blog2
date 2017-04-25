@@ -1,4 +1,5 @@
 <?php
+	require('/template/Smarty.class.php');
 	include('includes/connexion.inc.php');
 
 	if($connecte == true){

@@ -1,0 +1,23 @@
+.icone{
+	display: inline-block;
+	width: 48px;
+	height: 48px;
+	background-image: url("../img/redes.png");
+
+}
+
+.facebook:hover{
+	background-position: -48px 0px;
+}
+
+.facebook{
+	background-position: -48px -48px;
+}
+
+.twitter:hover{
+	background-position: 144px 0px;
+}
+
+.twitter{
+	background-position: 144px -48px;
+}

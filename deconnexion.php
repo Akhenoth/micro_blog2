@@ -1,5 +1,6 @@
 <?php
-setCookie("Uncookie", "", time()-1, null, null, true, false);
-
+echo("avant suppression");
+setCookie("Uncookie", "", time()-3600);
+echo("apres suppresion");
 header('Location: index.php');
 ?>
